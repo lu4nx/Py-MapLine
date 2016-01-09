@@ -1,0 +1,59 @@
+* Py-MapLine：简易的并发处理文本行工具
+
+一些临时需要的并发处理场景：
+
+- 给你一个域名列表，下班之前爬出每个域名的title
+
+- 给你一个IP列表，明前找出开放了HTTP的IP
+
+...
+
+* 使用方法
+
+** 工作流程
+
+1. 需要处理的行文件;
+
+2. 在自己的Python代码中定义一个foreach函数。
+
+程序会将文件逐行放入一个队列（Queue）中，然后线程池里的每个线程会从队
+列中不断取出行数据，并作为调用foreach函数的参数，这个过程直到队列为空。
+
+** 查看帮助信息：
+
+#+BEGIN_SRC shell
+  ➜  python mapline.py --help
+  Usage: mapline.py [options] input_file module_name
+
+  Options:
+    -h, --help  show this help message and exit
+    -c C        线程池大小
+    --test      自测
+#+END_SRC
+
+参数说明：
+
+- input_file：如要处理的文件
+
+- module_name：你写的Python处理函数
+
+* 示例
+** 转换出域名列表指向的IP
+
+示例代码文件：examples/host2ip.py
+
+示例数据文件：examples/domain_list.txt
+
+#+BEGIN_SRC shell
+  ➜  python mapline.py examples/domain_list.txt examples.host2ip
+  www.163.com     101.204.226.154
+  www.qq.com      112.90.83.112
+  www.sogou.com   106.38.241.48
+  www.baidu.com   180.97.33.108
+#+END_SRC
+
+此处module_name参数的值是examples.host2ip，这和Python的import用法一样
+的：也就是说examples目录下必须有__init__.py，如果host2ip.py在当前目录，
+参数值为host2ip即可。
+
+当前目录下会生成run.log，这是程序打印的日志信息。
