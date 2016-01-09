@@ -57,3 +57,6 @@
 参数值为host2ip即可。
 
 当前目录下会生成run.log，这是程序打印的日志信息。
+* 许可证
+
+Py-MapLine在[[http://opensource.org/licenses/MIT][MIT许可证]]下发行。
