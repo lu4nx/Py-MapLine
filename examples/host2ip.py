@@ -12,11 +12,11 @@ def host2ip(host):
 def foreach(host):
     host = host.strip()
     try:
-        print "%s\t%s\n" % (host, host2ip(host)),
-    except Exception:
-        pass
+        print("%s\t%s" % (host, host2ip(host)))
+    except Exception as err:
+        print(err)
 
 
 if __name__ == '__main__':
     # test self
-    print host2ip("www.qq.com")
+    print(host2ip("www.qq.com"))

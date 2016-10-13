@@ -9,13 +9,18 @@ Changelog:
 2016/01/09: Py-MapLine第一个版本
 """
 
+import sys
 import logging
 import threading
 import traceback
-
-from Queue import Empty
-from Queue import Queue
 from optparse import OptionParser
+
+if sys.version_info.major == 2:
+    from Queue import Empty
+    from Queue import Queue
+elif sys.version_info.major == 3:
+    from queue import Empty
+    from queue import Queue
 
 
 queue = Queue()
@@ -71,7 +76,7 @@ class ThreadPool(object):
         """
         self.work_queue = Queue()
 
-        for _ in xrange(self.thread_count):
+        for _ in range(self.thread_count):
             t = ThreadWork(self.work_queue)
             self.work_list.append(t)
 
@@ -178,14 +183,16 @@ if __name__ == '__main__':
     module_obj = load_module(module_name)
 
     with open(input_file) as f:
-        map(lambda line: queue.put(line.strip()), f)
+        for line in f:
+            queue.put(line.strip())
 
     threadpool = ThreadPool(thread_count=threadpool_size)
     logging.info("Thread Pool size: %d" % threadpool_size)
 
-    map(lambda i: threadpool.putjob(
-        work,
-        func_args=getattr(module_obj, "foreach")
-    ), xrange(threadpool_size))
+    for i in range(threadpool_size):
+        threadpool.putjob(
+            work,
+            func_args=getattr(module_obj, "foreach")
+        )
 
     threadpool.wait()
