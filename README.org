@@ -1,31 +1,35 @@
 * 说明
 
-本工具面向需要对输入的文本行进行并发处理，比如以下场景：
+本工具面向需要对输入的文本行进行并发处理的场景，例如：
 
-- 给你一个域名列表，下班之前爬出每个域名的title
+- 产品经理给了你一个域名列表，要求下班之前爬出每个域名的 title
 
-- 给你一个IP列表，明天上班前找出开放了HTTP的IP
+- 研发给你一个 IP 列表，明天上班前找出开放了 HTTP 的 IP
 
 ...
 
-* 使用方法
+类似很多这样的场景下，为了快速完成工作，我们希望只专注于功能实现，把并发的事丢给框架处理。
+
+* 使用说明
 ** 安装
+
 #+begin_example
   sudo python3 setup.py install
 #+end_example
+
+完成后 mapline.py 位于 /usr/bin 目录下。
 
 ** 工作流程
 
 1. 需要处理的行文件;
 
-2. 在自己的Python代码中定义一个foreach函数。
+2. 在自己的 Python 代码中定义一个 foreach 函数。
 
-程序会将文件逐行放入一个队列（Queue）中，然后线程池里的每个线程会从队
-列中不断取出行数据，并作为调用foreach函数的参数，这个过程直到队列为空。
+程序会将文件逐行放入一个队列（Queue）中，然后线程池里的每个线程会从队列中不断取出行数据，并作为调用 foreach 函数的参数，这个过程直到队列为空。
 
 ** 查看帮助信息：
 
-#+BEGIN_SRC shell
+#+begin_example
   $ python mapline.py --help
   Usage: mapline.py [options] input_file module_name
 
@@ -33,34 +37,32 @@
     -h, --help  show this help message and exit
     -c C        线程池大小
     --test      自测
-#+END_SRC
+#+end_example
 
 参数说明：
 
 - input_file：如要处理的文件
 
-- module_name：你写的Python处理函数
+- module_name：你写的 Python 处理模块
 
-* 示例
-** 转换出域名列表指向的IP
+** 开发演示：转换出域名列表指向的 IP
 
 示例代码文件：examples/host2ip.py
 
 示例数据文件：examples/domain_list.txt
 
-#+BEGIN_SRC shell
-  ➜  python mapline.py examples/domain_list.txt examples.host2ip
+#+begin_example
+  $ mapline.py examples/domain_list.txt examples.host2ip
   www.163.com     101.204.226.154
   www.qq.com      112.90.83.112
   www.sogou.com   106.38.241.48
   www.baidu.com   180.97.33.108
-#+END_SRC
+#+end_example
 
-此处module_name参数的值是examples.host2ip，这和Python的import用法一样
-的：也就是说examples目录下必须有__init__.py，如果host2ip.py在当前目录，
-参数值为host2ip即可。
+此处 module_name 参数的值是 examples.host2ip，这和 Python 的 import 用法一样的，也就是说 examples 目录下必须有 =__init__.py= ，如果 host2ip.py 在当前目录，参数值为 host2ip 即可。
 
-当前目录下会生成run.log，这是程序打印的日志信息。
+当前目录下会生成 run.log，这是程序打印的日志信息。
+
 * 许可证
 
-Py-MapLine在[[http://opensource.org/licenses/MIT][MIT许可证]]下发行。
+Py-MapLine 在 [[http://opensource.org/licenses/MIT][MIT 许可证]]下发行。
