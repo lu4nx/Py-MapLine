@@ -1,6 +1,6 @@
-* Py-MapLine：简易的并发处理文本行工具
+* 说明
 
-一些临时需要的并发处理场景：
+本工具面向需要对输入的文本行进行并发处理，比如以下场景：
 
 - 给你一个域名列表，下班之前爬出每个域名的title
 
@@ -9,6 +9,10 @@
 ...
 
 * 使用方法
+** 安装
+#+begin_example
+  sudo python3 setup.py install
+#+end_example
 
 ** 工作流程
 
@@ -22,7 +26,7 @@
 ** 查看帮助信息：
 
 #+BEGIN_SRC shell
-  ➜  python mapline.py --help
+  $ python mapline.py --help
   Usage: mapline.py [options] input_file module_name
 
   Options:
