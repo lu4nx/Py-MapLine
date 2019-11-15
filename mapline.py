@@ -38,7 +38,7 @@ class ThreadWork(threading.Thread):
                 if func:
                     func(args)
             except Exception:
-                pass
+                traceback.print_exc()
             finally:
                 self.task_queue.task_done()
 
