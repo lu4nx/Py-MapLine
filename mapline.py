@@ -3,6 +3,7 @@
 # author: lu4nx <lx@shellcodes.org>
 
 import sys
+import time
 import logging
 import threading
 import traceback
@@ -23,7 +24,30 @@ logging.basicConfig(
 )
 
 
-class ThreadWork(threading.Thread):
+class PrintProgressThread(threading.Thread):
+    """进度输出线程，每3秒向日志里输出一次当前进度
+
+    :param: line_total: 输入数据的总行数
+    """
+
+    def __init__(self, line_total):
+        threading.Thread.__init__(self)
+        self.total = line_total
+
+    def run(self):
+        while True:
+            current = queue.qsize()
+
+            if current == 0:
+                logging.info("current: 100%")
+                break
+
+            progress = int(100 - (current / self.total) * 100)
+            logging.info("Succeeded: %s%%" % progress)
+            time.sleep(3)
+
+
+class WorkThread(threading.Thread):
     """从队列中取得函数以及参数并执行"""
 
     def __init__(self, queue):
@@ -63,7 +87,7 @@ class ThreadPool(object):
         self.work_queue = Queue()
 
         for _ in range(self.thread_count):
-            t = ThreadWork(self.work_queue)
+            t = WorkThread(self.work_queue)
             self.work_list.append(t)
 
             t.setDaemon(True)
@@ -143,8 +167,6 @@ def work(*argv):
             break
         except Exception:
             traceback.print_exc()
-        finally:
-            queue.task_done()
 
 
 if __name__ == '__main__':
@@ -177,10 +199,14 @@ if __name__ == '__main__':
     threadpool = ThreadPool(thread_count=threadpool_size)
     logging.info("Thread Pool size: %d" % threadpool_size)
 
+    print_progress_thread = PrintProgressThread(queue.qsize())
+    print_progress_thread.start()
+
     for i in range(threadpool_size):
         threadpool.putjob(
             work,
             func_args=getattr(module_obj, "foreach")
         )
 
+    print_progress_thread.join()
     threadpool.wait()
